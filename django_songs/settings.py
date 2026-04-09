@@ -67,10 +67,21 @@ TEMPLATES = [
 WSGI_APPLICATION = 'django_songs.wsgi.application'
 
 # 6. Base de Datos (SQLite temporal para la Fase 1)
+# DATABASES = {
+#     'default': env.db(), # Esto lee automáticamente la variable DATABASE_URL si existiera
+# }
+# Pero como definimos variables separadas en el .env, usaremos esta configuración más explícita:
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT'),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
