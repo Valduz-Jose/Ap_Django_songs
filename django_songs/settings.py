@@ -19,11 +19,13 @@ else:
     print(f"⚠️ Advertencia: No se encontró el archivo .env en {env_file}")
 
 # 4. Configuración básica (con valores de respaldo para evitar errores de KeyError)
-SECRET_KEY = env('SECRET_KEY', default='django-insecure-respaldo-por-si-el-env-falla')
 
-DEBUG = env.bool('DEBUG', default=True)
+# Seguridad: ¡No dejes esto en True en internet!
+DEBUG = env.bool('DEBUG', default=False)
+SECRET_KEY = env('SECRET_KEY')
 
-ALLOWED_HOSTS = []
+# Quién puede acceder a la app (pon '*' para pruebas, o tu dominio luego)
+ALLOWED_HOSTS = ['*']
 
 # 5. Aplicaciones instaladas
 INSTALLED_APPS = [
@@ -38,6 +40,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -71,19 +74,22 @@ WSGI_APPLICATION = 'django_songs.wsgi.application'
 #     'default': env.db(), # Esto lee automáticamente la variable DATABASE_URL si existiera
 # }
 # Pero como definimos variables separadas en el .env, usaremos esta configuración más explícita:
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': env('DB_NAME'),
-        'USER': env('DB_USER'),
-        'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env('DB_HOST'),
-        'PORT': env('DB_PORT'),
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+if env('DATABASE_URL', default=None):
+    DATABASES = {'default': env.db()}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': env('DB_NAME'),
+            'USER': env('DB_USER'),
+            'PASSWORD': env('DB_PASSWORD'),
+            'HOST': env('DB_HOST'),
+            'PORT': env('DB_PORT'),
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            },
+        }
     }
-}
 
 # 7. Validadores de contraseña
 AUTH_PASSWORD_VALIDATORS = [
@@ -100,6 +106,16 @@ USE_I18N = True
 USE_TZ = True
 
 # 9. Archivos estáticos
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles' # Directorio donde se reunirán en producción
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
