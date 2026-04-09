@@ -30,7 +30,11 @@
             >
           </td>
           <td class="text-center">
-            <button class="btn btn-sm btn-outline-info">Editar</button>
+            <a
+              href="{% url 'canciones_editar' cancion.id %}"
+              class="btn btn-sm btn-outline-info"
+              >Editar</a
+            >
             <button class="btn btn-sm btn-outline-danger">Eliminar</button>
           </td>
         </tr>

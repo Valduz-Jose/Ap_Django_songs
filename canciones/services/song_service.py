@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from ..models import Cancion
 
 class SongService:
@@ -6,6 +7,11 @@ class SongService:
         return Cancion.objects.all().order_by('-id')
 
     @staticmethod
-    def crear_cancion(form_data):
-        """Recibe el formulario validado y guarda en la BD"""
+    def obtener_por_id(id):
+        """Busca una canción o lanza un error 404 si no existe"""
+        return get_object_or_404(Cancion, id=id)
+
+    @staticmethod
+    def crear_o_actualizar(form_data):
+        """Guarda tanto creaciones como ediciones"""
         return form_data.save()
