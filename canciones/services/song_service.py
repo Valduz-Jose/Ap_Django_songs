@@ -15,3 +15,8 @@ class SongService:
     def crear_o_actualizar(form_data):
         """Guarda tanto creaciones como ediciones"""
         return form_data.save()
+
+    @staticmethod
+    def eliminar_cancion(cancion):
+        """Elimina el registro de la base de datos"""
+        cancion.delete()

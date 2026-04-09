@@ -10,13 +10,16 @@ def crear(request):
     if request.method == 'POST':
         form = CancionForm(request.POST)
         if form.is_valid():
-            SongService.crear_cancion(form)
-            # .cleaned_data es un diccionario con los datos validados del formulario
+            # CAMBIA SongService.crear_cancion(form) POR:
+            SongService.crear_o_actualizar(form) 
             return redirect('index')
     else:
         form = CancionForm()
     
-    return render(request, 'canciones_form.html', {'form': form, 'titulo_pagina': 'Agregar Canción'})
+    return render(request, 'canciones_form.html', {
+        'form': form, 
+        'titulo_pagina': 'Nueva Canción'
+    })
 
 def editar(request, id):
     cancion = SongService.obtener_por_id(id)
@@ -34,3 +37,12 @@ def editar(request, id):
         'form': form, 
         'titulo_pagina': 'Editar Canción'
     })
+
+def eliminar(request, id):
+    cancion = SongService.obtener_por_id(id)
+    
+    if request.method == 'POST':
+        SongService.eliminar_cancion(cancion)
+        return redirect('index')
+        
+    return render(request, 'canciones_confirm_delete.html', {'cancion': cancion})

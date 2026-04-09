@@ -35,7 +35,11 @@
               class="btn btn-sm btn-outline-info"
               >Editar</a
             >
-            <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+            <a
+              href="{% url 'canciones_eliminar' cancion.id %}"
+              class="btn btn-sm btn-outline-danger"
+              >Eliminar</a
+            >
           </td>
         </tr>
         {% empty %}
